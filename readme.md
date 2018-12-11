@@ -50,3 +50,15 @@ Or, if you're on macOS with homebrew, you can simply run
 Once you've got redis installed on your system, start the local server in the background with
 
     redis-server  --daemonize yes
+
+
+### Run database migrations
+Detect changes to `models.py` and generate a timestamped migration file
+
+    alembic revision --autogenerate
+
+Once you've looked over the generated migrations file, apply the migration to the database
+
+    alembic upgrade head
+
+Note that you will need to run both of these commands once at initial setup to get your database setup.
