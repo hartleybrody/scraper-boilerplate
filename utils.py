@@ -1,51 +1,51 @@
+import os
 import csv
 import logging
 
 import requests
+from bs4 import BeautifulSoup
 from requests.exceptions import RequestException
 
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s:%(levelname)s:%(message)s')
-
+PROXIES_REQUIRED = os.environ["PROXIES_REQUIRED"].lower() == "true"
 PROXIES = []
-try:
-    with open("proxies.csv", "r") as f:
-        reader = csv.DictReader(f)
-        for line in reader:
-            PROXIES.append(line)
-except:
-    logging.warning("Found no proxies to use for this scrape")
 
 
 class ScrapingException(Exception):
     pass  # base exception we can catch ourselves
 
 
-def make_request(url, headers=None, proxy_detection_check=None):
+def make_request(url, headers=None, proxy_check=None, return_type="page"):
 
     proxy = get_proxy()
     if not proxy:
-        raise ScrapingException("No proxies available to make request")
+        no_proxies("No proxies available for this request")
 
     try:
         r = requests.get(url, headers=headers, proxies=proxy)
     except RequestException as e:
-        logging.error("Request for {} failed, trying again.".format(url))
-        return make_request(url, headers=headers, proxy_detection_check=proxy_detection_check)  # try request again, recursively
+        logging.warning("Request for {} failed, trying again.".format(url))
+        return make_request(url, headers=headers, proxy_check=proxy_check, return_type=return_type)  # try request again, recursively
 
-    # proxy_detection_check is a function argument (above) that takes
-    # the response object and returns a boolean indicating whether
-    # it appears that the site has blocked this request
-    if proxy_detection_check is not None:
-        is_detected = proxy_detection_check(r)
+    # proxy_check is a function argument that takes the `requests`
+    # response object and returns a boolean indicating whether it
+    # appears that the site has blocked this request
+    if proxy_check is not None:
+        is_detected = proxy_check(r)
         if is_detected:
             # remove the proxy we used for this request from the
             # PROXIES list so we don't try to reuse it (for now)
-            PROXIES.remove(proxy["info"])
-            logging.warning("Request using {} failed: {}".format(proxy["info"]["IP"], url))
-            return make_request(url, headers=headers, proxy_detection_check=proxy_detection_check)
+            PROXIES.remove(proxy["dict"])
+            logging.warning("Request using {} failed: {}".format(proxy["dict"]["IP"], url))
+            return make_request(url, headers=headers, proxy_check=proxy_check, return_type=return_type)  # try request again, recursively
 
-    return r
+    if return_type == "page":
+        return BeautifulSoup(r.text, "html.parser")
+    if return_type == "text":
+        return r.text
+    if return_type == "response":
+        return r
 
 
 def get_proxy():
@@ -68,5 +68,20 @@ def get_proxy():
     return {
         "http": proxy_url,
         "https": proxy_url,
-        "info": proxy
+        "dict": proxy
     }
+
+
+def no_proxies(msg):
+    if PROXIES_REQUIRED:
+        ScrapingException(msg)
+    else:
+        logging.warning(msg)
+
+try:
+    with open("proxies.csv", "r") as f:
+        reader = csv.DictReader(f)
+        for line in reader:
+            PROXIES.append(line)
+except:
+    no_proxies("No proxies available for this scrape")
