@@ -9,6 +9,10 @@ from utils import logging
 u = urlparse(os.environ["REDIS_URL"])
 redis = redis.StrictRedis(host=u.hostname, port=u.port, password=u.password, db=0)
 
+# note that the default implementation is to use the
+# redis 'set' as the datatype, so that duplicate work
+# isn't added to the queue: https://redis.io/topics/data-types#sets
+
 
 def enqueue_item(queue_name, item):
     if type(item) != str:
