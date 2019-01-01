@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import datetime, date, time
 
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
@@ -30,11 +30,11 @@ class BaseMixin(object):
         # into a python dict. Useful for JSON serialization.
         cols = {c.name: getattr(self, c.name) for c in self.__table__.columns}
         for k, v in cols.items():
-            if isinstance(v, datetime.datetime):
+            if isinstance(v, datetime):
                 cols[k] = v.isoformat()
-            elif isinstance(v, datetime.date):
+            elif isinstance(v, date):
                 cols[k] = v.strftime("%Y-%m-%d")
-            elif isinstance(v, datetime.time):
+            elif isinstance(v, time):
                 cols[k] = v.strftime("%H:%M:%S")
         return cols
 
