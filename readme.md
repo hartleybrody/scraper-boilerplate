@@ -62,3 +62,27 @@ Once you've looked over the generated migrations file, apply the migration to th
     alembic upgrade head
 
 Note that you will need to run both of these commands once at initial setup to get your database setup.
+
+You can roll back a migration using
+
+    alembic downgrade -1
+
+### Proxies
+A list of proxy IPs and ports should be stored in `input/proxies.txt`.
+
+They should be listed one per line, in the following format:
+
+    {ip_address}:{port}
+
+If proxies are required to run the scrape -- meaning the scrape should stop if no proxies are available -- then you should set the following environment variable:
+
+    export PROXIES_REQUIRED="true"
+
+Note that once the target site identifies a proxy and blocks it, that proxy will be removed from the in-memory proxy list for that scrape (it is not removed from the proxies file). This means that a scrape may start out with a full list of proxies but end up grinding to a halt if requests are made too frequently and proxies started to get detected by the target site and removed from the proxy list until none are left.
+
+From experience running this scrape, with 50 proxies you should not use more than 4 workers running requests at the same time.
+
+If proxies are not required to scrape (ie due to low-volume local testing) you can disable that check by setting
+
+    export PROXIES_REQUIRED="false"
+
