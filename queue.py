@@ -26,7 +26,7 @@ def dequeue_item(queue_name):
         item = item.decode('utf-8')
         if item.startswith("{") and item.endswith("}"):
             item = json.loads(item)
-    logging.debug("Dequeuing item from {}:\t{}".format(queue_name, item))
+    logging.debug(u"Dequeuing item from {}:\t{}".format(queue_name, item))
     return item
 
 def queue_size(queue_name):
