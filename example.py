@@ -1,7 +1,4 @@
-import re
 import time
-import random
-from datetime import datetime
 
 from queue import enqueue_item, dequeue_item
 from utils import make_request, logging
