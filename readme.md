@@ -1,5 +1,7 @@
 # Web Scraping Boilerplate
 
+[👉 Read more about this repository here.](https://blog.hartleybrody.com/web-scraping-boilerplate/)
+
 In the spirit of my [flask boilerplate](https://github.com/hartleybrody/flask-boilerplate) project, I figured it would be helpful to create a web scraping boilerplate repo. This will contain all of the common, generic helpers that I use on most scraping efforts to help get new projects off the ground faster.
 
 Specifically, it helps with:
