@@ -83,6 +83,8 @@ def no_proxies(msg):
 try:
     with open("input/proxies.txt", "r") as f:
         for line in f:
+            if line.startswith("#"):
+                continue
             pieces = line.strip().split(":")
             PROXIES.append({
                 "ip": pieces[0],
