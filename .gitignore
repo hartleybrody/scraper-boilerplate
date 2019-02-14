@@ -1,3 +1,6 @@
-.*
+.env
+.todo
 *.pyc
 *.csv
+input/
+output/*
