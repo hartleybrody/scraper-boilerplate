@@ -6,11 +6,13 @@ In the spirit of my [flask boilerplate](https://github.com/hartleybrody/flask-bo
 
 Specifically, it helps with:
 
- - getting python packages installed (requests, beautiful soup)
- - setting up redis to manage a work queue
- - helpers for making and retrying requests
- - logic for rotating proxies and detecting ones that aren't working
  - using a database to store scraped data
+ - helpers for making requests and handling network errors
+ - getting python packages installed (requests, beautiful soup)
+ - setting up redis to manage a queue of work
+ - rotating proxies and detecting ones that aren't working
+ - keeping track of which data was collected when
+ - managing changes to the database model over time
 
 There's nothing specific to scraping one particular site in here, all of this functionality is agnostic to the target site. This makes it useful as a base for any new scraping project, where it's collecting data from retailers, government sites or social networks.
 
